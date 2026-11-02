@@ -9,10 +9,14 @@ dependencies = [
 ]
 
 [project.scripts]
-shai = "main:main"
+shai = "shell_ai.cli:main"
 
 [tool.uv]
 package = true
 
 [tool.uv.sources]
 agentkit = { path = "../agentkit", editable = true }
+
+[build-system]
+requires = ["uv_build>=0.11.24,<0.12.0"]
+build-backend = "uv_build"

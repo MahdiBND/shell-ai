@@ -1,0 +1,18 @@
+[project]
+name = "shell-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "agentkit",
+]
+
+[project.scripts]
+shai = "main:main"
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+agentkit = { path = "../agentkit", editable = true }

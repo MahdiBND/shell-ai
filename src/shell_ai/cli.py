@@ -21,8 +21,8 @@ EXIT_WORDS = {"exit", "quit"}
 
 
 def main() -> None:
-    agent = build_assistant()  # includes an in-memory session store
-    session_id = str(uuid.uuid4())  # one id = one conversation
+    agent = build_assistant()
+    session_id = str(uuid.uuid4())
 
     print("Chat started. Type 'exit' or 'quit' to leave.\n")
 

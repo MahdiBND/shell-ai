@@ -6,8 +6,16 @@ and exits on 'exit' / 'quit' (or Ctrl+C / Ctrl+D).
 
 import uuid
 
+from .loadenv import global_path, load_dotenv
+
+load_dotenv(global_path)
+
 # from assistant import build_assistant
 from shell_ai import build_assistant
+from .typing import typing_disabled
+
+# from agentkit import configure_logging
+# configure_logging()        # or configure_logging("DEBUG")
 
 EXIT_WORDS = {"exit", "quit"}
 
@@ -31,8 +39,9 @@ def main() -> None:
             break
 
         try:
-            stream = agent.stream(user_input, session_id=session_id)
-            respond(stream)
+            with typing_disabled():
+                stream = agent.stream(user_input, session_id=session_id)
+                respond(stream)
         except KeyboardInterrupt:
             print("\n(interrupted)")
             break

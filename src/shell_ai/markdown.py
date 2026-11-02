@@ -1,6 +1,7 @@
 from threading import Lock
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.markdown import Markdown
+from rich.text import Text
 
 
 class StreamingMarkdown:
@@ -11,12 +12,10 @@ class StreamingMarkdown:
         self._lock = Lock()
 
     def append(self, text: str) -> None:
-        """Append incoming text without triggering a render."""
         with self._lock:
             self._parts.append(text)
 
     def get_content(self) -> str:
-        """Return the accumulated response."""
         with self._lock:
             return "".join(self._parts)
 
@@ -25,8 +24,12 @@ class StreamingMarkdown:
         console: Console,
         options: ConsoleOptions,
     ) -> RenderResult:
-        """Render Markdown when Rich refreshes the display."""
         content = self.get_content()
 
+        if not content:
+            yield Text("\nDiscombobulating...", style="dim", end="\n\n")
+
         if content:
-            yield from console.render(Markdown(content), options)
+            yield Text("\n\nClara: ", style="bold blue", end="\n\n")
+            yield Markdown(content)
+            yield Text("\ndone", style="dim", end="\n\n")

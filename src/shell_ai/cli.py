@@ -1,8 +1,4 @@
-"""Simple chat CLI for agentkit.
-
-Keeps conversation history while the program runs, streams the reply,
-and exits on 'exit' / 'quit' (or Ctrl+C / Ctrl+D).
-"""
+"""Shell AI command-line entry point."""
 
 import uuid
 
@@ -10,60 +6,54 @@ from .loadenv import global_path, load_dotenv
 
 load_dotenv(global_path)
 
-# from assistant import build_assistant
-from shell_ai import build_assistant
-from .typing import typing_disabled
-
-# from agentkit import configure_logging
-# configure_logging()        # or configure_logging("DEBUG")
-
-EXIT_WORDS = {"exit", "quit"}
+from .assistant import build_assistant
+from .tui import TerminalUI
 
 
 def main() -> None:
-    agent = build_assistant()
-    session_id = str(uuid.uuid4())
+    """Start the interactive Shell AI session."""
 
-    print("Chat started. Type 'exit' or 'quit' to leave.\n")
+    ui = TerminalUI()
 
-    while True:
-        try:
-            user_input = input("you> ").strip()
-        except EOFError, KeyboardInterrupt:
-            print()
-            break
+    try:
+        agent = build_assistant()
+        session_id = str(uuid.uuid4())
 
-        if not user_input:
-            continue
-        if user_input.lower() in EXIT_WORDS:
-            break
+        ui.show_welcome()
 
-        try:
-            with typing_disabled():
-                stream = agent.stream(user_input, session_id=session_id)
-                respond(stream)
-        except KeyboardInterrupt:
-            print("\n(interrupted)")
-            break
+        while True:
+            user_input = ui.prompt()
 
-        print("\n")
+            if user_input is None:
+                break
 
-    print("Bye!")
+            if not user_input:
+                continue
 
+            try:
+                # AgentKit streaming API
+                stream = agent.stream(
+                    user_input,
+                    session_id=session_id,
+                )
 
-def respond(stream):
-    print("agent> ", end="", flush=True)
-    streamed_text = False
+                ui.render_response(stream)
 
-    for e in stream:
-        if e.type == "text":
-            streamed_text = True
-            print(e.text, end="", flush=True)
-        elif e.type == "tool_call":
-            print(f"\n[calling {e.name}]\nagent> ", end="", flush=True)
-        elif e.type == "final" and not streamed_text:
-            # e.g. structured output: nothing streamed token by token
-            print(e.output, end="", flush=True)
+            except KeyboardInterrupt:
+                ui.show_info("Response interrupted.")
+                continue
+
+            except Exception as exc:
+                ui.show_error(str(exc))
+
+    except KeyboardInterrupt:
+        pass
+
+    except Exception as exc:
+        ui.show_error(str(exc))
+
+    finally:
+        ui.show_goodbye()
 
 
 if __name__ == "__main__":

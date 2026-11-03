@@ -21,30 +21,7 @@ def main() -> None:
 
         ui.show_welcome()
 
-        while True:
-            user_input = ui.prompt()
-
-            if user_input is None:
-                break
-
-            if not user_input:
-                continue
-
-            try:
-                # AgentKit streaming API
-                stream = agent.stream(
-                    user_input,
-                    session_id=session_id,
-                )
-
-                ui.render_response(stream)
-
-            except KeyboardInterrupt:
-                ui.show_info("Response interrupted.")
-                continue
-
-            except Exception as exc:
-                ui.show_error(str(exc))
+        input_loop(ui, agent, session_id)
 
     except KeyboardInterrupt:
         pass
@@ -54,6 +31,33 @@ def main() -> None:
 
     finally:
         ui.show_goodbye()
+
+
+def input_loop(ui, agent, session_id):
+    while True:
+        user_input = ui.prompt()
+
+        if user_input is None:
+            break
+
+        if not user_input:
+            continue
+
+        try:
+            # AgentKit streaming API
+            stream = agent.stream(
+                user_input,
+                session_id=session_id,
+            )
+
+            ui.render_response(stream)
+
+        except KeyboardInterrupt:
+            ui.show_info("Response interrupted.")
+            continue
+
+        except Exception as exc:
+            ui.show_error(str(exc))
 
 
 if __name__ == "__main__":

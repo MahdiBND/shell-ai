@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from agentkit import InMemorySessionStore, new_agent
-from .tools import get_current_time
-from .prompts.assistant import SYSTEM_PROMPT
+
+from ..tools.assistant import get_current_time
+from ..prompts.assistant import SYSTEM_PROMPT
 
 
 def build_assistant(session_store=None):

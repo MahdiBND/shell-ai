@@ -6,7 +6,7 @@ from .loadenv import global_path, load_dotenv
 
 load_dotenv(global_path)
 
-from .assistant import build_assistant
+from .bots.assistant import build_assistant
 from .tui import TerminalUI
 
 

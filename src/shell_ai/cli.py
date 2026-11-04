@@ -1,62 +1,22 @@
 """Shell AI command-line entry point."""
 
-import uuid
+from agentkit import configure_logging
 
-from .loadenv import global_path, load_dotenv
-
-# from .di import parse_args, bot
-from .loadenv import loadenv, current_path
-from .tui import TerminalUI
+from .arg_parser import parse_args
+from .bots import assistant, dev
+from .runner import run
 
 
 def main() -> None:
-    """Start the interactive Shell AI session."""
+    args = parse_args()
 
-    ui = TerminalUI()
+    # set dev mode
+    agent = dev if args.dev else assistant
 
-    try:
-        agent = assistant.init()
-        session_id = str(uuid.uuid4())
+    if args.verbose:
+        configure_logging()
 
-        ui.show_welcome()
-
-        input_loop(ui, agent, session_id)
-
-    except KeyboardInterrupt:
-        pass
-
-    except Exception as exc:
-        ui.show_error(str(exc))
-
-    finally:
-        ui.show_goodbye()
-
-
-def input_loop(ui, agent, session_id):
-    while True:
-        user_input = ui.prompt()
-
-        if user_input is None:
-            break
-
-        if not user_input:
-            continue
-
-        try:
-            # AgentKit streaming API
-            stream = agent.stream(
-                user_input,
-                session_id=session_id,
-            )
-
-            ui.render_response(stream)
-
-        except KeyboardInterrupt:
-            ui.show_info("Response interrupted.")
-            continue
-
-        except Exception as exc:
-            ui.show_error(str(exc))
+    run(args, agent)
 
 
 if __name__ == "__main__":

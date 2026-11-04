@@ -6,7 +6,7 @@ from .loadenv import global_path, load_dotenv
 
 load_dotenv(global_path)
 
-from .bots.assistant import build_assistant
+from .bots import assistant
 from .tui import TerminalUI
 
 
@@ -16,7 +16,7 @@ def main() -> None:
     ui = TerminalUI()
 
     try:
-        agent = build_assistant()
+        agent = assistant.init()
         session_id = str(uuid.uuid4())
 
         ui.show_welcome()

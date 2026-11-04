@@ -8,10 +8,9 @@ from ..tools.assistant import get_current_time
 from ..prompts.assistant import SYSTEM_PROMPT
 
 
-def build_assistant(session_store=None):
-    """Create the assistant. Keeps chat history for as long as the store lives."""
-    return new_agent(
-        SYSTEM_PROMPT,
-        tools=[get_current_time],
-        session_store=session_store or InMemorySessionStore(),
-    )
+def init(
+    instructions=SYSTEM_PROMPT,
+    tools=[get_current_time],
+    session_store=InMemorySessionStore(),
+):
+    return new_agent(instructions, tools=tools, session_store=session_store)

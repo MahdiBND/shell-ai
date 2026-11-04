@@ -4,9 +4,8 @@ import uuid
 
 from .loadenv import global_path, load_dotenv
 
-load_dotenv(global_path)
-
-from .bots import assistant
+# from .di import parse_args, bot
+from .loadenv import loadenv, current_path
 from .tui import TerminalUI
 
 

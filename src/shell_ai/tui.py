@@ -74,12 +74,12 @@ class TerminalUI:
         self.console.print(f"\n[dim]{message}[/dim]\n")
 
     def show_welcome(self) -> None:
-        # self.console.print(
-        #     "\n[bold green]Shell AI[/bold green] " "[dim]Interactive assistant[/dim]"
-        # )
         self.console.print(
             "[dim]Clara: Type `exit`, `quit`, or `ctrl+c` to quit.[/dim]\n"
         )
+
+    def show_exec_ui(self) -> None:
+        self.console.print("[dim]`ctrl+c` to quit.[/dim]\n")
 
     def show_goodbye(self) -> None:
         self.console.print("\n[dim]Goodbye![/dim]")
